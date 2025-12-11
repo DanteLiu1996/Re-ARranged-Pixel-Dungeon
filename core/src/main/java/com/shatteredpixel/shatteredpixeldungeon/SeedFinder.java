@@ -1,5 +1,6 @@
 package com.shatteredpixel.shatteredpixeldungeon;
 
+import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.SacrificialFire;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroClass;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.ArmoredStatue;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.CrystalMimic;
@@ -35,6 +36,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.wands.Wand;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MeleeWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
+import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.special.SacrificeRoom;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.HeroSelectScene;
 import com.shatteredpixel.shatteredpixeldungeon.utils.DungeonSeed;
@@ -347,6 +349,25 @@ public class SeedFinder {
 				}
 			}
 
+			if (l.blobs != null){
+				SacrificialFire fire = (SacrificialFire) l.blobs.get(SacrificialFire.class);
+				if (fire != null) {
+					String reward = SacrificeRoom.prize(l).identify().title().toLowerCase();
+					for (int j = 0; j < itemList.size(); j++) {
+						String wantingItem = itemList.get(j);
+						boolean precise = wantingItem.startsWith("\"")&&wantingItem.endsWith("\"");
+						if (!precise && reward.replaceAll(" ", "").contains(wantingItem.replaceAll(" ", ""))
+								||
+								precise && reward.equals(wantingItem)) {
+							if (!itemsFound[j]) {
+								itemsFound[j] = true;
+								break;
+							}
+						}
+					}
+				}
+			}
+
 			for (Heap h : heaps) {
 				for (Item item : h.items) {
 					item.identify();
@@ -497,6 +518,16 @@ public class SeedFinder {
 				Imp.Quest.complete();
 
 				addTextQuest(appendCaption(Messages.get(this, "imp_reward")), rewards, builder);
+			}
+
+			if (l.blobs != null){
+				SacrificialFire fire = (SacrificialFire) l.blobs.get(SacrificialFire.class);
+				if (fire != null) {
+					ArrayList<Item> rewards = new ArrayList<>();
+					Item reward = SacrificeRoom.prize(l);
+					rewards.add(reward.identify());
+					addTextQuest(appendCaption(Messages.get(this, "sacrifice_reward")), rewards, builder);
+				}
 			}
 
 			heaps.addAll(getMobDrops(l));
