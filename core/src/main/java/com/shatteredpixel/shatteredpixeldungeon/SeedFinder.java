@@ -40,6 +40,7 @@ import com.shatteredpixel.shatteredpixeldungeon.scenes.HeroSelectScene;
 import com.shatteredpixel.shatteredpixeldungeon.utils.DungeonSeed;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndMessage;
 import com.watabou.utils.Random;
+import com.watabou.utils.Reflection;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -379,6 +380,48 @@ public class SeedFinder {
 		return true;
 	}
 
+	private String getMappings() {
+		StringBuilder mappings = new StringBuilder();
+
+		mappings.append(appendCaption(Messages.get(this, "scrolls"))).append(":\n");
+		for (Class<?> c : Generator.Category.SCROLL.classes) {
+			if (c.getSimpleName().equals("PlaceHolder")) continue;
+			Scroll item = (Scroll) Reflection.newInstance(c);
+			if (item != null) {
+				String anonymousName = item.anonymousName();
+				String trueName = item.trueName();
+				mappings.append(anonymousName).append(" -> ").append(trueName).append("\n");
+			}
+		}
+		mappings.append("\n");
+
+		mappings.append(appendCaption(Messages.get(this, "potions"))).append(":\n");
+		for (Class<?> c : Generator.Category.POTION.classes) {
+			if (c.getSimpleName().equals("PlaceHolder")) continue;
+			Potion item = (Potion) Reflection.newInstance(c);
+			if (item != null) {
+				String anonymousName = item.anonymousName();
+				String trueName = item.trueName();
+				mappings.append(anonymousName).append(" -> ").append(trueName).append("\n");
+			}
+		}
+		mappings.append("\n");
+
+		mappings.append(appendCaption(Messages.get(this, "rings"))).append(":\n");
+		for (Class<?> c : Generator.Category.RING.classes) {
+			if (c.getSimpleName().equals("PlaceHolder")) continue;
+			Ring item = (Ring) Reflection.newInstance(c);
+			if (item != null) {
+				String anonymousName = item.anonymousName();
+				String trueName = item.trueName();
+				mappings.append(anonymousName).append(" -> ").append(trueName).append("\n");
+			}
+		}
+		mappings.append("\n");
+
+		return mappings.toString();
+	}
+
 	public String logSeedItems(String seed, int floors) {
 		for (GamesInProgress.Info info : GamesInProgress.checkAll()){
 			if (info.seed == DungeonSeed.convertFromText(seed)){
@@ -391,6 +434,8 @@ public class SeedFinder {
 		GamesInProgress.selectedClass = HeroClass.WARRIOR;
 		Dungeon.init();
 		StringBuilder result = new StringBuilder(Messages.get(this, "result", DungeonSeed.convertToCode(Dungeon.seed), Dungeon.seed)+":\n\n");
+
+		result.append(getMappings());
 
 		blacklist = Arrays.asList(Gold.class, Dewdrop.class, IronKey.class, GoldenKey.class, CrystalKey.class, EnergyCrystal.class,
 				CorpseDust.class, Embers.class, CeremonialCandle.class, Pickaxe.class);
