@@ -249,6 +249,7 @@ public class SeedFinder {
 
 		ArrayList<HeapItem> trinkets = getTrinkets();
 		for (int k = 0; k < trinkets.size(); k++) {
+			String trinket = trinkets.get(k).item.title().toLowerCase();
 			for (int j = 0; j < itemList.size(); j++) {
 				String wantingItem = itemList.get(j);
 				boolean precise = wantingItem.startsWith("\"")&&wantingItem.endsWith("\"");
@@ -257,8 +258,8 @@ public class SeedFinder {
 				}else{
 					wantingItem = wantingItem.replaceAll(" ", "");
 				}
-				if (!precise && trinkets.get(k).item.title().replaceAll(" ","").contains(wantingItem) ||
-						precise && trinkets.get(k).item.title().equals(wantingItem)) {
+				if (!precise && trinket.replaceAll(" ","").contains(wantingItem) ||
+						precise && trinket.equals(wantingItem)) {
 					if (!itemsFound[j]) {
 						itemsFound[j] = true;
 						break;
@@ -274,6 +275,7 @@ public class SeedFinder {
 			heaps.addAll(getMobDrops(l));
 
 			if(Ghost.Quest.armor != null){
+				String armor = Ghost.Quest.armor.identify().title().toLowerCase();
 				for (int j = 0; j < itemList.size(); j++) {
 					String wantingItem = itemList.get(j);
 					boolean precise = wantingItem.startsWith("\"")&&wantingItem.endsWith("\"");
@@ -282,7 +284,7 @@ public class SeedFinder {
 					}else{
 						wantingItem = wantingItem.replaceAll(" ", "");
 					}
-					if (!precise&&Ghost.Quest.armor.identify().title().toLowerCase().replaceAll(" ","").contains(wantingItem) || precise&& Ghost.Quest.armor.identify().title().toLowerCase().equals(wantingItem)) {
+					if (!precise&&armor.replaceAll(" ","").contains(wantingItem) || precise&& armor.equals(wantingItem)) {
 						if (!itemsFound[j]) {
 							itemsFound[j] = true;
 							break;
@@ -291,10 +293,10 @@ public class SeedFinder {
 				}
 			}
 			if(Wandmaker.Quest.wand1 != null){
+				String wand1 = Wandmaker.Quest.wand1.identify().title().toLowerCase();
+				String wand2 = Wandmaker.Quest.wand2.identify().title().toLowerCase();
 				for (int j = 0; j < itemList.size(); j++) {
 					String wantingItem = itemList.get(j);
-					String wand1 = Wandmaker.Quest.wand1.identify().title().toLowerCase();
-					String wand2 = Wandmaker.Quest.wand2.identify().title().toLowerCase();
 					boolean precise = wantingItem.startsWith("\"") && wantingItem.endsWith("\"");
 					if(precise){
 						wantingItem = wantingItem.replaceAll("\"","");
@@ -334,10 +336,10 @@ public class SeedFinder {
 				}
 			}
 			if (Imp.Quest.reward != null){
+				String ring = Imp.Quest.reward.identify().title().toLowerCase();
 				for (int j = 0; j < itemList.size(); j++) {
 					String wantingItem = itemList.get(j);
 					boolean precise = wantingItem.startsWith("\"")&&wantingItem.endsWith("\"");
-					String ring = Imp.Quest.reward.identify().title().toLowerCase();
 					if (!precise&&ring.replaceAll(" ","").contains(wantingItem.replaceAll(" ",""))
 							||
 							precise&& ring.equals(wantingItem)) {
